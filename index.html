@@ -1,61 +1,88 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Daily Operations</title>
-  <link rel="stylesheet" href="./style.css">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Daily Operations</title>
+<style>
+body{margin:0;font-family:Arial;background:#0F1C2E;color:white}
+.app{padding:20px;padding-bottom:80px}
+.card{background:#16263D;padding:18px;margin-top:15px;border-radius:12px}
+.task{display:block;background:#1c2f4a;margin-top:10px;padding:12px;border-radius:10px}
+.currentBlock{border:2px solid #2F80FF;box-shadow:0 0 12px #2F80FF}
+.nav{position:fixed;bottom:0;width:100%;background:#16263D;display:flex;justify-content:space-around;padding:10px}
+.nav button{background:none;border:none;color:white;font-size:16px}
+.hidden{display:none}
+.popup{position:fixed;top:0;left:0;width:100%;height:100%;background:#000c;display:flex;justify-content:center;align-items:center}
+.popupContent{background:#16263D;padding:25px;border-radius:12px;width:80%}
+</style>
 </head>
 <body>
-
-<div id="flowScreen" class="screen">
-<div class="app">
-  <header>
-    <h1>Daily Operations</h1>
-    <p id="date"></p>
-  </header>
-
-  <h2 class="sectionTitle">Today's Flow</h2>
-  <div id="tasks"></div>
-
-  <div class="card">
-    <h2>Day Completion</h2>
-    <p id="progress"></p>
-    <button onclick="resetDay()">Reset Day</button>
-  </div>
+<div id="flowScreen" class="app">
+<h1>Daily Operations</h1>
+<p id="date"></p>
+<div id="tasks"></div>
+<div class="card"><h2>Progress</h2><p id="progress"></p><button onclick="resetDay()">Reset Day</button></div>
 </div>
+<div id="dashboardScreen" class="app hidden">
+<h1>Dashboard</h1>
+<div class="card"><h2>Today %</h2><p id="todayPercent"></p></div>
+<div class="card"><h2>Tasks Completed</h2><p id="tasksToday"></p></div>
+<div class="card"><h2>Streak</h2><p id="streak"></p></div>
+<div class="card"><h2>Total Days</h2><p id="totalDays"></p></div>
 </div>
-
-<div id="dashboardScreen" class="screen hidden">
-  <div class="app">
-    <h1>System Dashboard</h1>
-
-    <div class="card"><h2>Today Completion</h2><p id="todayPercent">0%</p></div>
-    <div class="card"><h2>Tasks Completed Today</h2><p id="tasksToday">0</p></div>
-    <div class="card"><h2>Current Streak</h2><p id="streak">0 days</p></div>
-    <div class="card"><h2>Total Days Completed</h2><p id="totalDays">0</p></div>
-  </div>
+<div id="manualScreen" class="app hidden">
+<h1>Manual</h1>
+<p>Tap tasks to read instructions.</p>
 </div>
-
-<div id="manualScreen" class="screen hidden">
-  <div class="app">
-    <h1>Operational Manual</h1>
-    <p>Tap tasks to read instructions.</p>
-  </div>
-</div>
-
 <nav class="nav">
-  <button onclick="showScreen('flow')">Flow</button>
-  <button onclick="showScreen('dashboard')">Dashboard</button>
-  <button onclick="showScreen('manual')">Manual</button>
+<button onclick="show('flow')">Flow</button>
+<button onclick="show('dashboard')">Dashboard</button>
+<button onclick="show('manual')">Manual</button>
 </nav>
-
 <div id="popup" class="popup hidden">
-  <div class="popupContent">
-    <h2 id="popupTitle"></h2>
-    <p id="popupText"></p>
-    <button onclick="closePopup()">Close</button>
-  </div>
+<div class="popupContent">
+<h2 id="popupTitle"></h2>
+<p id="popupText"></p>
+<button onclick="closePopup()">Close</button>
 </div>
-
-<script src="./script.js"></script>
+</div>
+<script>
+document.getElementById("date").innerText=new Date().toDateString()
+const todayKey=new Date().toDateString()
+let saved=JSON.parse(localStorage.getItem(todayKey))||{}
+const SOP={"Hydration":"Drink 500ml water","Workout":"Follow training SOP","Deep Work":"90 min focus","Sleep":"Sleep on time"}
+const blocks=[
+{block:"Morning",tasks:["Hydration","Workout"]},
+{block:"Work",tasks:["Deep Work"]},
+{block:"Night",tasks:["Sleep"]}
+]
+let total=0,done=0
+const tasksDiv=document.getElementById("tasks")
+blocks.forEach(b=>{
+const div=document.createElement("div");div.className="card";div.innerHTML="<h2>"+b.block+"</h2>"
+b.tasks.forEach(t=>{
+total++
+const checked=saved[t]?"checked":"";if(saved[t])done++
+const label=document.createElement("label");label.className="task"
+label.innerHTML=`<input type="checkbox" ${checked}> ${t}`
+label.onclick=()=>openPopup(t)
+label.querySelector("input").onchange=e=>{
+saved[t]=e.target.checked||undefined
+localStorage.setItem(todayKey,JSON.stringify(saved))
+done=e.target.checked?done+1:done-1
+update()
+}
+div.appendChild(label)
+})
+tasksDiv.appendChild(div)
+})
+function update(){document.getElementById("progress").innerText=done+"/"+total}
+update()
+function show(s){["flow","dashboard","manual"].forEach(x=>document.getElementById(x+"Screen").classList.add("hidden"));document.getElementById(s+"Screen").classList.remove("hidden");dash()}
+function dash(){let p=Math.round(done/total*100)||0;document.getElementById("todayPercent").innerText=p+"%";document.getElementById("tasksToday").innerText=done;let h=JSON.parse(localStorage.getItem("history"))||{};if(p==100){h[todayKey]=1;localStorage.setItem("history",JSON.stringify(h))};let days=Object.keys(h);document.getElementById("totalDays").innerText=days.length;document.getElementById("streak").innerText=days.length+" days"}
+function openPopup(t){document.getElementById("popupTitle").innerText=t;document.getElementById("popupText").innerText=SOP[t]||"Instruction coming soon";document.getElementById("popup").classList.remove("hidden")}
+function closePopup(){document.getElementById("popup").classList.add("hidden")}
+function resetDay(){localStorage.removeItem(todayKey);location.reload()}
+</script>
 </body>
 </html>
