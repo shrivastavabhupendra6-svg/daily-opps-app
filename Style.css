@@ -1,0 +1,28 @@
+.popupContent {
+  background: #16263D;
+  padding: 25px;
+  border-radius: 12px;
+  max-width: 300px;
+}
+.hidden {
+  display: none;
+}
+.nav {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  background: #16263D;
+  display: flex;
+  justify-content: space-around;
+  padding: 10px 0;
+}
+.nav button {
+  background: none;
+  border: none;
+  color: white;
+  font-size: 16px;
+}
+.screen {
+  padding-bottom: 70px;
+}
