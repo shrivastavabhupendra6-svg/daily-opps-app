@@ -1,34 +1,61 @@
 <!DOCTYPE html>
-
 <html>
 <head>
   <title>Daily Operations</title>
-<link rel="stylesheet" href="./style.css">
+  <link rel="stylesheet" href="./style.css">
 </head>
 <body>
-<p id="popupText"></p>
-    <button onclick="closePopup()">Close</button>
-  </div>
+
+<div id="flowScreen" class="screen">
+<div class="app">
+  <header>
+    <h1>Daily Operations</h1>
+    <p id="date"></p>
+  </header>
+
+  <h2 class="sectionTitle">Today's Flow</h2>
+  <div id="tasks"></div>
+
+  <div class="card">
+    <h2>Day Completion</h2>
+    <p id="progress"></p>
+    <button onclick="resetDay()">Reset Day</button>
+  </div>
 </div>
-  <nav class="nav">
-  <button onclick="showScreen('flow')">Flow</button>
-  <button onclick="showScreen('dashboard')">Dashboard</button>
-  <button onclick="showScreen('manual')">Manual</button>
-</nav>
- </div>
 </div>
+
 <div id="dashboardScreen" class="screen hidden">
-  <div class="app">
-    <h1>System Dashboard</h1>
-    <p>Stats coming next.</p>
-  </div>
+  <div class="app">
+    <h1>System Dashboard</h1>
+
+    <div class="card"><h2>Today Completion</h2><p id="todayPercent">0%</p></div>
+    <div class="card"><h2>Tasks Completed Today</h2><p id="tasksToday">0</p></div>
+    <div class="card"><h2>Current Streak</h2><p id="streak">0 days</p></div>
+    <div class="card"><h2>Total Days Completed</h2><p id="totalDays">0</p></div>
+  </div>
 </div>
+
 <div id="manualScreen" class="screen hidden">
-  <div class="app">
-    <h1>Operational Manual</h1>
-    <p>Library coming next.</p>
-  </div>
-</div> 
+  <div class="app">
+    <h1>Operational Manual</h1>
+    <p>Tap tasks to read instructions.</p>
+  </div>
+</div>
+
+<nav class="nav">
+  <button onclick="showScreen('flow')">Flow</button>
+  <button onclick="showScreen('dashboard')">Dashboard</button>
+  <button onclick="showScreen('manual')">Manual</button>
+</nav>
+
+<div id="popup" class="popup hidden">
+  <div class="popupContent">
+    <h2 id="popupTitle"></h2>
+    <p id="popupText"></p>
+    <button onclick="closePopup()">Close</button>
+  </div>
+</div>
+
 <script src="./script.js"></script>
 </body>
 </html>
